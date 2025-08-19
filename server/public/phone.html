@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Phone Sender</title>
+  <style>
+    body { text-align: center; font-family: Arial; }
+    video { width: 100%; max-width: 400px; border: 2px solid black; margin-top: 10px; }
+    button { margin-top: 10px; padding: 10px 20px; font-size: 16px; }
+  </style>
+</head>
+<body>
+  <h2>Phone Camera Streaming</h2>
+  <video id="localVideo" autoplay playsinline muted></video>
+  <br>
+  <button id="startBtn">Start Camera</button>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const localVideo = document.getElementById("localVideo");
+    const startBtn = document.getElementById("startBtn");
+
+    const socket = io("http://192.168.81.117:3000"); // Laptop IP
+    const pc = new RTCPeerConnection({
+      iceServers: [{ urls: "stun:stun.l.google.com:19302" }]
+    });
+
+    // Debug ICE candidates
+    pc.onicecandidate = event => {
+      console.log("Phone ICE candidate:", event.candidate);
+      if(event.candidate) socket.emit("signal", { candidate: event.candidate });
+    };
+
+    // Start camera and send tracks
+    startBtn.onclick = async () => {
+      startBtn.disabled = true;
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+        localVideo.srcObject = stream;
+        stream.getTracks().forEach(track => pc.addTrack(track, stream));
+
+        const offer = await pc.createOffer();
+        await pc.setLocalDescription(offer);
+        console.log("Phone offer:", offer);
+        socket.emit("signal", { sdp: offer });
+      } catch(err) {
+        console.error(err);
+        alert("Cannot access camera. Allow camera permission!");
+        startBtn.disabled = false;
+      }
+    };
+
+    // Handle answer from laptop
+    socket.on("signal", async data => {
+  try {
+    if (data.sdp?.type === "offer") {
+      console.log("Laptop received offer:", data.sdp);
+      await pc.setRemoteDescription(new RTCSessionDescription(data.sdp));
+      const answer = await pc.createAnswer();
+      await pc.setLocalDescription(answer);
+      console.log("Laptop sending answer:", answer);
+      socket.emit("signal", { sdp: answer });
+    } 
+    else if (data.candidate) {
+      console.log("Laptop received ICE candidate:", data.candidate);
+      await pc.addIceCandidate(new RTCIceCandidate(data.candidate));
+    }
+    // DO NOT set remote description for 'answer' on the laptop receiver
+  } catch(err) {
+    console.error("Laptop signaling error:", err);
+  }
+});
+
+  </script>
+</body>
+</html>
