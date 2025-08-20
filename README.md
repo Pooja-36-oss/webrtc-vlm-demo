@@ -1,63 +1,65 @@
-# WebRTC Video & Metrics Demo – Day 2 & 3
+# WebRTC Video & Metrics Demo – Day 1, 2 & 3
 
 ## Overview
 
-This project demonstrates a **WebRTC-based video stream** with **ONNX object detection**, metrics collection (FPS & latency), and automated download.  
-It also includes scripts for Docker deployment and benchmarking.
+This project demonstrates a **WebRTC-based video stream** with real-time **ONNX object detection**, metrics collection, overlay visualization, and Docker deployment.  
+It is designed to run on mobile and desktop browsers, supporting front/back cameras, and includes benchmarking scripts.
 
 ---
 
-## Features
+## Day 1 – WebRTC Video Demo
 
-- Real-time object detection using `ssd_mobilenet_v1_coco` ONNX model.
-- Overlay bounding boxes with labels on video.
-- Metrics collection:
-  - `capture_ts` – frame capture timestamp
-  - `recv_ts` – frame receive timestamp (for server-client)
-  - `inference_ts` – model inference timestamp
-  - Latency & FPS calculation
-- Download metrics as `metrics.json` via button or **D** key.
-- Configurable for front/back camera on mobile devices.
-- Dockerized deployment for easy setup.
-- Scripts for benchmarking and start-up.
+### Features
 
----
+- Real-time video streaming from phone camera to laptop/browser.
+- Front camera enabled by default (can switch to back camera with settings).
+- Video overlay using `<canvas>` for visualization.
+- Basic HTML/CSS/JS setup for demonstration.
 
-## Setup
+### Setup
 
-### Requirements
-
-- Node.js >= 18
-- npm
-- Docker & docker-compose (optional for containerized setup)
-
-### Clone Repo
+1. Clone repo:
 
 ```bash
 git clone git@github.com:Pooja-36-oss/webrtc-vlm-demo.git
 cd webrtc-vlm-demo
 
-
-Day 2 – Metrics Collection
-
-Run server locally:
+Install dependencies:
 
 npm install
+
+
+Start server:
+
 npm start
 
 
-Open the phone stream in browser:
+Open in browser:
 
-Ensure front or back camera is selected.
+Laptop: http://localhost:3000
 
-Allow camera permissions.
+Phone: http://<laptop-ip>:3000/phone.html
 
-Metrics collection:
+Day 2 – Metrics Collection
+Features
 
-Metrics collected per frame:
+Object detection using ssd_mobilenet_v1_coco ONNX model.
 
+Overlay bounding boxes with class labels on video.
+
+Metrics collection per frame:
+
+capture_ts – frame capture timestamp
+
+recv_ts – frame receive timestamp (for server-client)
+
+inference_ts – model inference timestamp
+
+Latency & FPS calculation
+
+Example Metrics JSON
 {
-  "frame_id": "string_or_int",
+  "frame_id": "1",
   "capture_ts": 1690000000000,
   "recv_ts": 1690000000100,
   "inference_ts": 1690000000120,
@@ -74,36 +76,34 @@ Metrics collected per frame:
 }
 
 
-Coordinates normalized [0..1].
+Coordinates normalized [0..1] for overlay alignment.
 
-Overlay aligns with frame using frame_id & capture_ts.
+Metrics collected automatically per frame.
 
-Download metrics:
+Download metrics via Download Metrics button or press D key.
 
-Click Download Metrics button OR press D key.
+Day 3 – Scripts, Docker & Docs
+Scripts
 
-Saves metrics as metrics.json.
+Start server:
 
-Day 3 – Scripts & Docs
-
-Start server with scripts:
-
-# Linux/Mac
+# Linux / Mac
 ./start.sh
 
 # Windows
 start.bat
 
 
-Docker deployment:
+Benchmarking:
 
+# Linux/Mac
+./bench/run_bench.sh
+
+# Windows
+bench\run_bench.bat
+
+Docker Deployment
 docker-compose up --build
 
 
-Benchmarking scripts:
-
-# Run CPU/GPU benchmark
-./bench/run_bench.sh
-
-# Windows batch
-bench\run_bench.bat
+Includes Dockerfile and docker-compose.yml for containerized setup.
