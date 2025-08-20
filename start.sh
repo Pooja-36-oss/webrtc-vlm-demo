@@ -1,16 +1,11 @@
-#!/bin/bash
-set -e
+@echo off
+setlocal
 
-MODE=${MODE:-wasm}
+REM Default mode = wasm
+if "%MODE%"=="" set MODE=wasm
 
-echo "Starting demo in $MODE mode..."
+echo 🚀 Starting demo in %MODE% mode...
 
-if [ "$MODE" == "wasm" ]; then
-  docker-compose up --build frontend
-elif [ "$MODE" == "server" ]; then
-  docker-compose up --build
-else
-  echo "Unknown mode: $MODE"
-  exit 1
-fi
- 
+docker-compose up --build
+
+endlocal

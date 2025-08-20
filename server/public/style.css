@@ -1,0 +1,35 @@
+body {
+  text-align: center;
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 20px;
+  background-color: #f2f2f2;
+}
+
+.video-container {
+  position: relative;
+  display: inline-block;
+}
+
+#remoteVideo {
+  width: 640px;       /* fixed width (or change to 100% if responsive) */
+  height: auto;
+  display: block;
+  border: 2px solid black;
+}
+
+video, canvas {
+  width: 100%;
+  max-width: 480px;
+  height: auto;
+  border: 2px solid black;
+}
+
+#overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  background-color: transparent; /* 👈 this makes it look like a second video */
+}
+

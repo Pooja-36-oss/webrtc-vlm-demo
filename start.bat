@@ -1,0 +1,3 @@
+@echo off
+echo 🚀 Starting WebRTC VLM demo with Docker...
+docker-compose up --build

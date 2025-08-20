@@ -1,0 +1,15 @@
+version: "3.8"
+
+services:
+  webrtc-server:
+    build: .
+    container_name: webrtc-server
+    working_dir: /app
+    command: node server/server.js
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+    environment:
+      - MODE=${MODE:-wasm}   # default wasm, can override to server
+    restart: unless-stopped
